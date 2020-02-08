@@ -1,0 +1,19 @@
+{
+  "name": "birddog-studio",
+  "version": "1.0.0",
+  "api_version": "1.0.0",
+  "keywords": [
+    "NDI",
+    "Video"
+  ],
+  "manufacturer": "BirdDog",
+  "product": "BD-Studio/Mini",
+  "shortname": "BD-NDI",
+  "description": "BirdDog Control plugin for Companion",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Kettner <bazoo1q@gmail.com>",
+  "license": "MIT"
+}
