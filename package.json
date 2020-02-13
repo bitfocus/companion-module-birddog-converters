@@ -15,5 +15,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Alexander Kettner <bazoo1q@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "got": "^10.5.2"
+  }
 }
