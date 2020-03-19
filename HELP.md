@@ -1,5 +1,6 @@
 ## Birddog Studio/Mini
 This module connects to a Birddog Studio/Mini
+<br/>
 The module has an integrated database based on json which stores Ndi Sources to find them later
 
 ### Configuration
