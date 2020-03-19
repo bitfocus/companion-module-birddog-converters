@@ -1,92 +1,66 @@
-const instance_skel  = require('../../instance_skel');
-const { executeAction, getActions } = require('./actions');
+const instance_skel = require('../../instance_skel');
 
 const { getConfigFields } = require('./config');
 
-/**
- * Companion instance class for BirdDog Studio/Mini
- */
+const instance_api = require('./birddogapi');
+const ndi_api = require('./ndiapi');
+
+const { executeAction, getActions } = require('./actions');
+
+var log;
+
 class BirdDogInstance extends instance_skel {
 
-  /**
-   * Create an instance of a BirdDog module.
-   *
-   * @param {EventEmitter} system - the brains of the operation
-   * @param {string} id - the instance ID
-   * @param {Object} config - saved user configuration parameters
-   * @since 1.0.1
-   */
-  constructor(system, id, config) {
+	constructor(system, id, config) {
 
-    super(system, id, config);
+		super(system, id, config);
 
-  }
+		this.api = new instance_api(this);
+		this.ndi = new ndi_api(this);
+		this.getActions = getActions;
 
-  /**
-   * Main initialization function called once the module
-   * is OK to start doing things.
-   *
-   * @access public
-   * @since 1.0.1
-   */
-  init() {
+	}
+
+	init() {
+
 		this.status(this.STATUS_UNKNOWN);
-  }
 
+		if (this.config.nsdMode) {
+			this.ndi.startNdiSourceInterval();
+		}
+		this.api.aboutDevice();
+		this.actions();
+	}
 
-  /**
-   * Process an updated configuration array.
-   *
-   * @param {Object} config - the new configuration
-   * @access public
-   * @since 1.0.1
-   */
-  updateConfig(config) {
-      this.config = config;
+	updateConfig(config) {
+		if (this.config.nsdMode != config.nsdMode) {
+			if (config.nsdMode) {
+				this.ndi.startNdiSourceInterval();
+			} else {
+				this.ndi.stopNdiSourceInterval();
+			}
+		}
 
-      this.actions();
-  }
+		this.config = config;
 
-  /**
-   * Set fields for instance configuration in the web
-   *
-   * @access public
-   * @since 1.0.1
-   */
+		this.actions();
+	}
+
 	config_fields() {
 		return getConfigFields();
 	}
 
-  /**
-   * Clean up the instance before it is destroyed.
-   *
-   * @access public
-   * @since 1.0.1
-   */
-  destroy() {
-    this.debug("destroy", this.id);
-  }
+	destroy() {
+		this.debug("destroy", this.id);
+	}
 
-  /**
-   * Set available actions
-   *
-   * @access public
-   * @since 1.0.1
-   */
-  actions() {
-    this.system.emit('instance_actions', this.id, getActions.bind(this)());
-  }
+	actions() {
+		this.system.emit('instance_actions', this.id, getActions.bind(this)());
+	}
 
-  /**
-   * Set available actions
-   *
-   * @param {Object} action - the action to be executed
-   * @access public
-   * @since 1.0.1
-   */
-  action(action) {
-    executeAction.bind(this)(action);
-  }
+	action(action) {
+		executeAction.bind(this)(action);
+	}
 
 }
 module.exports = BirdDogInstance;

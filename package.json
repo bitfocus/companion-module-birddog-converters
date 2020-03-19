@@ -9,14 +9,14 @@
   "manufacturer": "BirdDog",
   "product": "BD-Studio/Mini",
   "shortname": "BD-NDI",
-  "description": "BirdDog Control plugin for Companion",
+  "description": "BirdDog Studio/Mini Control plugin for Companion",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Alexander Kettner <bazoo1q@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "got": "^10.5.2"
+    "got": "^9.6.0",
+    "lowdb": "^1.0.0",
+    "grandiose": "git://github.com/AlexK-99/grandiose.git#0.0.5",
+    "set-interval-async": "^1.0.30"
   }
 }
