@@ -91,7 +91,7 @@ class ndi_api {
   stopNdiSourceInterval() {
     clearIntervalAsync(this.timer);
     this.init = false;
-    this.instance.log('debug', 'Stop Ndi Sourec Interval');
+    this.instance.log('debug', 'Stop Ndi Source Interval');
   }
 
 }

@@ -26,7 +26,7 @@ exports.getActions = function() {
         },
         {
           type: 'number',
-          label: 'NDI Sourec Port',
+          label: 'NDI Source Port',
           id: 'ndiSourcePort',
           width: 3,
           regex: this.REGEX_PORT,
