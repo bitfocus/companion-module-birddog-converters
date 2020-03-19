@@ -1,8 +1,8 @@
-const instance_skel       										= require('../../instance_skel');
-const { getConfigFields } 										= require('./config');
+const instance_skel		= require('../../instance_skel');
+const { getConfigFields }		= require('./config');
 
-const instance_api        										= require('./birddogapi');
-const ndi_api             										= require('./ndiapi');
+const instance_api		= require('./birddogapi');
+const ndi_api		= require('./ndiapi');
 
 const { executeAction, getActions } = require('./actions');
 

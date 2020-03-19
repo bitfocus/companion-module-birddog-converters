@@ -1,13 +1,13 @@
-const events 																= require('events');
-const eventEmitter 										= new events.EventEmitter();
+const events		= require('events');
+const eventEmitter		= new events.EventEmitter();
 
-const grandiose 													= require('grandiose');
+const grandiose		= require('grandiose');
 
-const low 																			= require('lowdb');
-const FileAsync 													= require('lowdb/adapters/FileAsync');
-const adapter 															= new FileAsync(__dirname + '/db.json');
-const { setIntervalAsync } 		= require('set-interval-async/dynamic');
-const { clearIntervalAsync } = require('set-interval-async');
+const low		= require('lowdb');
+const FileAsync		= require('lowdb/adapters/FileAsync');
+const adapter		= new FileAsync(__dirname + '/db.json');
+const { setIntervalAsync }		= require('set-interval-async/dynamic');
+const { clearIntervalAsync }		= require('set-interval-async');
 var db;
 
 class ndi_api {
