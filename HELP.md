@@ -10,5 +10,5 @@ The module has an integrated database based on json which stores Ndi Sources to 
 * NDI Source Detection Interval: Please do not change the Ndi Source Detection Time unless you know what you are doing
 
 ### Available actions
-* Change NDI Decode Source
-* Remove NDI Decode Sourec from DB
+* Change NDI Decode Source: In the Source drop down that custom is the one for which you can also manually set your own sources as Ndi Decode Source using the three entries "NDI Source Name", "NDI Source IP" and "NDI Source Port"
+* Remove NDI Decode Source from DB
