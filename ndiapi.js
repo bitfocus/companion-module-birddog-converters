@@ -43,8 +43,8 @@ class ndi_api {
       });
     }
     sourceList.push({
-      id: 'custom',
-      label: 'Custom'
+      id: 'default',
+      label: 'Select a Source'
     });
     return sourceList;
   }

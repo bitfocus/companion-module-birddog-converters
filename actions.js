@@ -1,15 +1,19 @@
 exports.getActions = function() {
   return {
     changeNdiSource: {
-      label: 'Change NDI Decode Source',
+      label: 'Change Decode Source',
       options: [{
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          default: 'custom',
+          default: 'default',
           choices: this.ndi.getSourceDropdown()
-        },
-        {
+        }
+      ]
+    },
+    changeNdiSourceIP: {
+      label: 'Change Decode Source by IP',
+      options: [{
           type: 'textinput',
           label: 'NDI Source Name',
           id: 'ndiSource',
@@ -42,7 +46,7 @@ exports.getActions = function() {
         type: 'dropdown',
         label: 'Source',
         id: 'source',
-        default: 'custom',
+        default: 'default',
         choices: this.ndi.getSourceDropdown()
       }, ]
     }
@@ -51,14 +55,7 @@ exports.getActions = function() {
 
 exports.executeAction = function(action) {
   if (action.action === 'changeNdiSource') {
-    if (action.options.source == 'custom') {
-      if (action.options.ndiSource && action.options.ndiSourceIp && action.options.ndiSourcePort) {
-        this.api.setNdiDecodeSource(action.options.ndiSourceIp, action.options.ndiSourcePort, action.options.ndiSource);
-      } else {
-        this.log('error', 'The Ndi decoding source could not be changed!!! <h4>Check Action Config!!!</h4>');
-      }
-    } else {
-      if (action.options.source) {
+     if (action.options.source) {
         (async () => {
           var sourceSize = await this.ndi.getDb().get('source').filter({
             name: action.options.source
@@ -77,6 +74,11 @@ exports.executeAction = function(action) {
       } else {
         this.log('error', 'The Ndi decoding source could not be changed!!! <h4>Check Action Config!!!</h4>');
       }
+  } else if (action.action === 'changeNdiSourceIP') {
+    if (action.options.ndiSource && action.options.ndiSourceIp && action.options.ndiSourcePort) {
+      this.api.setNdiDecodeSource(action.options.ndiSourceIp, action.options.ndiSourcePort, action.options.ndiSource);
+    } else {
+      this.log('error', 'The Ndi decoding source could not be changed!!! <h4>Check Action Config!!!</h4>');
     }
   } else if (action.action === 'removeNdiSource') {
     if (action.options.source) {

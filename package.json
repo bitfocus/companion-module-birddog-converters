@@ -1,6 +1,6 @@
 {
   "name": "birddog-studio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "api_version": "1.0.0",
   "keywords": [
     "NDI",
@@ -16,7 +16,7 @@
   "dependencies": {
     "got": "^9.6.0",
     "lowdb": "^1.0.0",
-    "grandiose": "git://github.com/AlexK-99/grandiose.git#0.0.5",
+    "grandiose": "git://github.com/jensstigaard/grandiose",
     "set-interval-async": "^1.0.30"
   }
 }
