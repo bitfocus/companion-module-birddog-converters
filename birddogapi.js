@@ -50,7 +50,7 @@ class instance_api {
       })
       .catch(err => {
         console.log(err);
-        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR,'Error');
       });
     return this.device;
@@ -64,13 +64,13 @@ class instance_api {
     got.get(url, options)
       .then(res => {
         if (!res.body) {
-          this.instance.log('warn', 'Retrieving the encoding settings failed!');
+          this.instance.log('warn', `Unable to retreive the encoding settings for ${this.device.deviceName}`);
           return;
         }
         this.device.encsettings = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.encsettings;
@@ -84,13 +84,13 @@ class instance_api {
     got.get(url, options)
       .then(res => {
         if (!res.body) {
-          this.instance.log('warn', 'Retrieving the decoding settings failed!');
+          this.instance.log('warn', `Unable to retreive the decoding settings for ${this.device.deviceName}`);
           return;
         }
         this.device.decsettings = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.decsettings;
@@ -104,13 +104,13 @@ class instance_api {
     got.get(url, options)
       .then(res => {
         if (!res.body) {
-          this.instance.log('warn', 'Retrieving the AV settings failed!');
+          this.instance.log('warn', `Unable to retreive AV settings for ${this.device.deviceName}`);
           return;
         }
         this.device.avsettings = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.avsettings;
@@ -124,13 +124,13 @@ class instance_api {
     got.get(url, options)
       .then(res => {
         if (!res.body) {
-          this.instance.log('warn', 'Retrieving the NDI decoding source failed!');
+          this.instance.log('warn', `Unable to retreive the NDI decode source for ${this.device.deviceName}`);
           return;
         }
         this.device.source = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.source;
@@ -142,7 +142,7 @@ class instance_api {
 
   setNdiDecodeSource(ip, port, sourceName) {
     if (!ip || !port || !sourceName) {
-      this.instance.log('warn', `The Ndi decoding source could not be changed!!`);
+      this.instance.log('warn', `Unable to change NDI decode source for ${this.device.deviceName}`);
       return false;
     }
 
@@ -162,19 +162,19 @@ class instance_api {
     got.post(url, options)
       .then(res => {
         if (!res.body) {
-          this.instance.log('warn', `The Ndi decoding source could not be changed to: ${sourceName} on Devicce: ${this.device.devicenName}`);
+          this.instance.log('warn', `Unable to change NDI decode source to ${sourceName} on ${this.device.deviceName}`);
           return;
         }
         if (JSON.stringify(res.body) == JSON.stringify(sourceJson)) {
           this.device.source = sourceName;
 
-          this.instance.log('info', `Change NDI Decode Source to: ${this.device.source} on Device: ${this.device.deviceName}!!!`);
+          this.instance.log('info', `Changed NDI decode source to ${this.device.source} on ${this.device.deviceName}`);
         } else {
-          this.instance.log('warn', `The Ndi decoding source could not be changed to: ${sourceName} on Devicce: ${this.device.devicenName}`);
+          this.instance.log('warn', `Unable to change NDI decode source to ${sourceName} on ${this.device.deviceName}`);
         }
       })
       .catch(err => {
-        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
 

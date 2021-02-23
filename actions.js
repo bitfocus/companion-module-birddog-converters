@@ -68,17 +68,17 @@ exports.executeAction = function(action) {
 
             this.api.setNdiDecodeSource(urlAddressSplit[0], urlAddressSplit[1], sourceDb[0].name);
           } else {
-            this.log('error', 'The Ndi decoding source could not be changed!!! <h4>Check Action Config!!!</h4>');
+            this.log('error', 'Unable to find the configured NDI source. Please check the NDI source info in the action configuration');
           }
         })();
       } else {
-        this.log('error', 'The Ndi decoding source could not be changed!!! <h4>Check Action Config!!!</h4>');
+        this.log('error', 'Unable to find the configured NDI source. Please check the NDI source info in the action configuration');
       }
   } else if (action.action === 'changeNdiSourceIP') {
     if (action.options.ndiSource && action.options.ndiSourceIp && action.options.ndiSourcePort) {
       this.api.setNdiDecodeSource(action.options.ndiSourceIp, action.options.ndiSourcePort, action.options.ndiSource);
     } else {
-      this.log('error', 'The Ndi decoding source could not be changed!!! <h4>Check Action Config!!!</h4>');
+      this.log('error', 'Unable to find the configured NDI source. Please check the NDI source info in the action configuration');
     }
   } else if (action.action === 'removeNdiSource') {
     if (action.options.source) {
@@ -92,11 +92,11 @@ exports.executeAction = function(action) {
           }).write();
           this.log('info', `Remove NDI Decode Source: ${action.options.source}!!!`);
         } else {
-          this.log('error', 'The Ndi decoding source could not be removed!!! <h4>Check Action Config!!!</h4>');
+          this.log('error', 'Unable to remove the configured NDI source. Please check the NDI source info in the action configuration');
         }
       })();
     } else {
-      this.log('error', 'The Ndi decoding source could not be removed!!! <h4>Check Action Config!!!</h4>');
+      this.log('error', 'Unable to remove the configured NDI source. Please check the NDI source info in the action configuration');
     }
   }
 };
