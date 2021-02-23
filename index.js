@@ -22,7 +22,7 @@ class BirdDogInstance extends instance_skel {
 
   init() {
 
-    this.status(this.STATUS_UNKNOWN);
+    this.status(this.STATUS_WARNING,'Connecting');
 
     if (this.config.nsdMode) {
       this.ndi.startNdiSourceInterval();
@@ -41,8 +41,8 @@ class BirdDogInstance extends instance_skel {
     }
 
     this.config = config;
+    this.init();
 
-    this.actions();
   }
 
   config_fields() {
