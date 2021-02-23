@@ -11,8 +11,7 @@ exports.getConfigFields = () => {
       type: 'textinput',
       label: 'Target IP',
       id: 'deviceIp',
-      width: 8,
-      default: "127.0.0.1",
+      width: 6,
       regex: this.REGEX_IP,
       required: true
     },
