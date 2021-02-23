@@ -44,11 +44,14 @@ class instance_api {
       .then(res => {
         if (res.body.MyHostName) {
           this.device.deviceName = res.body.MyHostName;
+          this.instance.log('info', 'Connected to ' + this.device.deviceName);
+          this.instance.status(this.instance.STATUS_OK);
         }
       })
       .catch(err => {
         console.log(err);
-        this.instance.log('warn', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.status(this.instance.STATUS_ERROR,'Error');
       });
     return this.device;
   }
@@ -67,7 +70,8 @@ class instance_api {
         this.device.encsettings = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('warn', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.encsettings;
   }
@@ -86,7 +90,8 @@ class instance_api {
         this.device.decsettings = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('warn', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.decsettings;
   }
@@ -105,7 +110,8 @@ class instance_api {
         this.device.avsettings = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('warn', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.avsettings;
   }
@@ -124,7 +130,8 @@ class instance_api {
         this.device.source = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('warn', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.source;
   }
@@ -167,7 +174,8 @@ class instance_api {
         }
       })
       .catch(err => {
-        this.instance.log('warn', 'Please check the device status or the ip and port of the device');
+        this.instance.log('error', 'Please check the device status or the ip and port of the device');
+        this.instance.status(this.instance.STATUS_ERROR);
       });
 
   }
