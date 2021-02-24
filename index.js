@@ -2,7 +2,6 @@ const instance_skel			= require('../../instance_skel');
 const { getConfigFields }		= require('./config');
 
 const instance_api			= require('./birddogapi');
-const ndi_api				= require('./ndiapi');
 
 const { executeAction, getActions } 	= require('./actions');
 
@@ -15,7 +14,6 @@ class BirdDogInstance extends instance_skel {
     super(system, id, config);
 
     this.api = new instance_api(this);
-    this.ndi = new ndi_api(this);
     this.getActions = getActions;
 
   }
@@ -24,22 +22,13 @@ class BirdDogInstance extends instance_skel {
 
     this.status(this.STATUS_WARNING,'Connecting');
 
-    if (this.config.nsdMode) {
-      this.ndi.startNdiSourceInterval();
-    }
     this.api.aboutDevice();
+    this.api.getSourceList();
     this.actions();
   }
 
   updateConfig(config) {
-    if (this.config.nsdMode != config.nsdMode) {
-      if (config.nsdMode) {
-        this.ndi.startNdiSourceInterval();
-      } else {
-        this.ndi.stopNdiSourceInterval();
-      }
-    }
-
+    
     this.config = config;
     this.init();
 

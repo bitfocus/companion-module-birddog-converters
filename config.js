@@ -25,25 +25,6 @@ exports.getConfigFields = () => {
       max: 65535,
       default: 8080,
       required: true
-    },
-    {
-      type: 'checkbox',
-      label: 'NDI Source Detection Mode',
-      id: 'nsdMode',
-      width: 3,
-      default: true,
-      required: true
-    },
-    {
-      type: 'number',
-      label: 'NDI Source Detection Interval (ms)',
-      id: 'nsdInt',
-      width: 4,
-      regex: this.REGEX_NUMBER,
-      default: 10000,
-      min: 5000,
-      max: 60000,
-      required: true
     }
   ]
 };

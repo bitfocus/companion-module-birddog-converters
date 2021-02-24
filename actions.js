@@ -7,7 +7,7 @@ exports.getActions = function() {
           label: 'Source',
           id: 'source',
           default: 'default',
-          choices: this.ndi.getSourceDropdown()
+          choices: this.api.device.sourceslist
         }
       ]
     },
@@ -39,38 +39,16 @@ exports.getActions = function() {
           default: 8080,
         }
       ]
-    },
-    removeNdiSource: {
-      label: 'Remove NDI Decode Source from DB',
-      options: [{
-        type: 'dropdown',
-        label: 'Source',
-        id: 'source',
-        default: 'default',
-        choices: this.ndi.getSourceDropdown()
-      }, ]
     }
   };
 };
 
 exports.executeAction = function(action) {
   if (action.action === 'changeNdiSource') {
-     if (action.options.source) {
-        (async () => {
-          var sourceSize = await this.ndi.getDb().get('source').filter({
-            name: action.options.source
-          }).size().value();
-          if (sourceSize > 0) {
-            var sourceDb = await this.ndi.getDb().get('source').filter({
-              name: action.options.source
-            }).value();
-            var urlAddressSplit = sourceDb[0].urlAddress.split(':');
-
-            this.api.setNdiDecodeSource(urlAddressSplit[0], urlAddressSplit[1], sourceDb[0].name);
-          } else {
-            this.log('error', 'Unable to find the configured NDI source. Please check the NDI source info in the action configuration');
-          }
-        })();
+     if (action.options.source !=undefined) {
+        var urlAddressSplit = this.api.device.sourceslist[action.options.source].split(':');
+        var name = action.options.source;
+      this.api.setNdiDecodeSource(urlAddressSplit[0], urlAddressSplit[1], name);
       } else {
         this.log('error', 'Unable to find the configured NDI source. Please check the NDI source info in the action configuration');
       }
@@ -79,24 +57,6 @@ exports.executeAction = function(action) {
       this.api.setNdiDecodeSource(action.options.ndiSourceIp, action.options.ndiSourcePort, action.options.ndiSource);
     } else {
       this.log('error', 'Unable to find the configured NDI source. Please check the NDI source info in the action configuration');
-    }
-  } else if (action.action === 'removeNdiSource') {
-    if (action.options.source) {
-      (async () => {
-        var sourceSize = await this.ndi.getDb().get('source').filter({
-          name: action.options.source
-        }).size().value();
-        if (sourceSize > 0) {
-          await this.ndi.getDb().get('source').remove({
-            name: action.options.source
-          }).write();
-          this.log('info', `Remove NDI Decode Source: ${action.options.source}!!!`);
-        } else {
-          this.log('error', 'Unable to remove the configured NDI source. Please check the NDI source info in the action configuration');
-        }
-      })();
-    } else {
-      this.log('error', 'Unable to remove the configured NDI source. Please check the NDI source info in the action configuration');
     }
   }
 };
