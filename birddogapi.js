@@ -9,7 +9,6 @@ class instance_api {
       port: this.instance.config.devicePort,
       deviceName: '',
       source: '',
-      sourcelist:'',
       encsettings: {
         ndiaudio: '',
         nditally: '',
@@ -32,7 +31,6 @@ class instance_api {
         videoouts: '',
         vidinsel: '',
       },
-      source: ''
     };
   }
 
@@ -68,19 +66,20 @@ class instance_api {
           this.instance.log('warn', `Unable to retreive available sources for ${this.device.deviceName}`);
           return;
         }
-        this.device.sourceslist = [];
+        this.sourcelist = [];
         for (const [key, value] of Object.entries(res.body)) {
           var NDIName = key;
           var NDIIP = value; 
-          this.device.sourceslist[NDIName] = NDIIP;
-          this.device.sourceslist.push({ id: NDIName, label: NDIName});
+          this.sourcelist[NDIName] = NDIIP;
+          this.instance.log('warn', this.sourcelist[NDIName])
+          this.sourcelist.push({ id: NDIName, label: NDIName});
         }
       })
       .catch(err => {
         this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
-    return this.device.sourcelist;
+    return this.sourcelist;
   }
 
   getEncSettings() {

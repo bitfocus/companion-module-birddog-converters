@@ -31,7 +31,6 @@ class BirdDogInstance extends instance_skel {
     
     this.config = config;
     this.init();
-
   }
 
   config_fields() {

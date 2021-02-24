@@ -6,8 +6,7 @@ exports.getActions = function() {
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          default: 'default',
-          choices: this.api.device.sourceslist
+          choices: this.api.sourcelist
         }
       ]
     },
@@ -46,7 +45,7 @@ exports.getActions = function() {
 exports.executeAction = function(action) {
   if (action.action === 'changeNdiSource') {
      if (action.options.source !=undefined) {
-        var urlAddressSplit = this.api.device.sourceslist[action.options.source].split(':');
+        var urlAddressSplit = this.api.sourcelist[action.options.source].split(':');
         var name = action.options.source;
       this.api.setNdiDecodeSource(urlAddressSplit[0], urlAddressSplit[1], name);
       } else {
