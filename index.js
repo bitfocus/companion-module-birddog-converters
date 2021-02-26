@@ -73,7 +73,7 @@ class BirdDogInstance extends instance_skel {
 			name: 'decode_source'
 		});
 
-		this.setVariable('decode_source', this.api.device.source);
+		this.setVariable('decode_source', this.api.device.currentSource);
 
 		this.setVariableDefinitions(variables);
 	}

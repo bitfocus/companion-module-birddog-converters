@@ -1,6 +1,6 @@
 exports.getActions = function() {
   return {
-    changeNdiSource: {
+    changeNDISource: {
       label: 'Change Decode Source',
       options: [{
           type: 'dropdown',
@@ -10,7 +10,7 @@ exports.getActions = function() {
         }
       ]
     },
-    changeNdiSourceIP: {
+    changeNDISourceIP: {
       label: 'Change Decode Source by IP',
       options: [{
           type: 'textinput',
@@ -35,27 +35,32 @@ exports.getActions = function() {
           regex: this.REGEX_PORT,
           min: 1,
           max: 65535,
-          default: 8080,
+          default: 5961,
         }
       ]
-    }
+    },
+    resfreshNDISourceList: {
+      label: 'Resfresh NDI Source List',
+    },
   };
 };
 
 exports.executeAction = function(action) {
-  if (action.action === 'changeNdiSource') {
+  if (action.action === 'changeNDISource') {
      if (action.options.source !=undefined) {
         var urlAddressSplit = this.api.sourcelist[action.options.source].split(':');
         var name = action.options.source;
-      this.api.setNdiDecodeSource(urlAddressSplit[0], urlAddressSplit[1], name);
+      this.api.setNDIDecodeSource(urlAddressSplit[0], urlAddressSplit[1], name);
       } else {
         this.log('error', 'Unable to find the configured NDI source. Please check the NDI source info in the action configuration');
       }
-  } else if (action.action === 'changeNdiSourceIP') {
+  } else if (action.action === 'changeNDISourceIP') {
     if (action.options.ndiSource && action.options.ndiSourceIp && action.options.ndiSourcePort) {
-      this.api.setNdiDecodeSource(action.options.ndiSourceIp, action.options.ndiSourcePort, action.options.ndiSource);
+      this.api.setNDIDecodeSource(action.options.ndiSourceIp, action.options.ndiSourcePort, action.options.ndiSource);
     } else {
       this.log('error', 'Unable to find the configured NDI source. Please check the NDI source info in the action configuration');
     }
+  } else if (action.action === 'resfreshNDISourceList') {
+      this.api.getSourceList();
   }
 };

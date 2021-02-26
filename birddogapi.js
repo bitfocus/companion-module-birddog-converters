@@ -35,7 +35,7 @@ class instance_api {
   }
 
   aboutDevice() {
-    const url = `http://${this.instance.config.deviceIp}:${this.instance.config.devicePort}/about`;
+    const url = `http://${this.instance.config.deviceIp}:8080/about`;
     const options = {
       json: true
     };
@@ -49,14 +49,14 @@ class instance_api {
       })
       .catch(err => {
         console.log(err);
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR,'Error');
       });
     return this.device;
   }
 
   getSourceList() {
-    const url = `http://${this.instance.config.deviceIp}:${this.instance.config.devicePort}/List`;
+    const url = `http://${this.instance.config.deviceIp}:8080/List`;
     const options = {
       json: true
     };
@@ -76,14 +76,14 @@ class instance_api {
         this.instance.system.emit('instance_actions', this.instance.id, this.instance.getActions.bind(this.instance)());
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.sourcelist;
   }
 
   getEncSettings() {
-    const url = `http://${this.instance.config.deviceIp}:${this.instance.config.devicePort}/enc-settings`;
+    const url = `http://${this.instance.config.deviceIp}:8080/enc-settings`;
     const options = {
       json: true
     };
@@ -96,14 +96,14 @@ class instance_api {
         this.device.encsettings = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.encsettings;
   }
 
   getDecSettings() {
-    const url = `http://${this.instance.config.deviceIp}:${this.instance.config.devicePort}/dec-settings`;
+    const url = `http://${this.instance.config.deviceIp}:8080/dec-settings`;
     const options = {
       json: true
     };
@@ -117,14 +117,14 @@ class instance_api {
         this.instance.log('warn', this.device.decsettings);
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.decsettings;
   }
 
   getAVSettings() {
-    const url = `http://${this.instance.config.deviceIp}:${this.instance.config.devicePort}/av-settings`;
+    const url = `http://${this.instance.config.deviceIp}:8080/av-settings`;
     const options = {
       json: true
     };
@@ -137,14 +137,14 @@ class instance_api {
         this.device.avsettings = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
     return this.device.avsettings;
   }
 
   getActiveSource() {
-    const url = `http://${this.instance.config.deviceIp}:${this.instance.config.devicePort}/connectTo`;
+    const url = `http://${this.instance.config.deviceIp}:8080/connectTo`;
     const options = {
       json: true
     };
@@ -154,29 +154,28 @@ class instance_api {
           this.instance.log('warn', `Unable to retreive the NDI decode source for ${this.device.deviceName}`);
           return;
         } else if (res.body.sourceName) {
-          this.device.source = res.body.sourceName;
+          this.device.currentSource = res.body.sourceName;
         }
-        //this.device.source = JSON.stringify(res.body);
-        this.instance.setVariable('decode_source', this.device.source);
+        this.instance.setVariable('decode_source', this.device.currentSource);
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
-    return this.device.source;
+    return this.device.currentSource;
   }
 
   getDevice() {
     return this.device;
   }
 
-  setNdiDecodeSource(ip, port, sourceName) {
+  setNDIDecodeSource(ip, port, sourceName) {
     if (!ip || !port || !sourceName) {
       this.instance.log('warn', `Unable to change NDI decode source for ${this.device.deviceName}`);
       return false;
     }
 
-    const url = `http://${this.instance.config.deviceIp}:${this.instance.config.devicePort}/connectTo`;
+    const url = `http://${this.instance.config.deviceIp}:8080/connectTo`;
     const sourceNameSplit = sourceName.split(" ");
     const sourceJson = {
       connectToIp: ip,
@@ -205,7 +204,7 @@ class instance_api {
         }
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
+        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
         this.instance.status(this.instance.STATUS_ERROR);
       });
 
