@@ -6,7 +6,7 @@ class instance_api {
     this.instance = instance;
     this.device = {
       ip: this.instance.config.deviceIp,
-      port: this.instance.config.devicePort,
+      port: 8080,
       deviceName: '',
       source: '',
       encsettings: {
@@ -43,7 +43,7 @@ class instance_api {
       .then(res => {
         if (res.body.MyHostName) {
           this.device.deviceName = res.body.MyHostName;
-          this.instance.log('info', 'Connected to ' + this.device.deviceName);
+          this.instance.log('info', `Connected to ${this.device.deviceName}`);
           this.instance.status(this.instance.STATUS_OK);
         }
       })
@@ -114,6 +114,7 @@ class instance_api {
           return;
         }
         this.device.decsettings = JSON.stringify(res.body);
+        this.instance.log('warn', this.device.decsettings);
       })
       .catch(err => {
         this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
@@ -142,7 +143,7 @@ class instance_api {
     return this.device.avsettings;
   }
 
-  getAktiveSource() {
+  getActiveSource() {
     const url = `http://${this.instance.config.deviceIp}:${this.instance.config.devicePort}/connectTo`;
     const options = {
       json: true
@@ -152,8 +153,11 @@ class instance_api {
         if (!res.body) {
           this.instance.log('warn', `Unable to retreive the NDI decode source for ${this.device.deviceName}`);
           return;
+        } else if (res.body.sourceName) {
+          this.device.source = res.body.sourceName;
         }
-        this.device.source = JSON.stringify(res.body);
+        //this.device.source = JSON.stringify(res.body);
+        this.instance.setVariable('decode_source', this.device.source);
       })
       .catch(err => {
         this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
@@ -195,6 +199,7 @@ class instance_api {
           this.device.source = sourceName;
 
           this.instance.log('info', `Changed NDI decode source to ${this.device.source} on ${this.device.deviceName}`);
+          this.getActiveSource();
         } else {
           this.instance.log('warn', `Unable to change NDI decode source to ${sourceName} on ${this.device.deviceName}`);
         }

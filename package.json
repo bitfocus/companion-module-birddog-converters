@@ -12,6 +12,9 @@
   "description": "BirdDog Studio/Mini Control plugin for Companion",
   "main": "index.js",
   "author": "Alexander Kettner <bazoo1q@gmail.com>",
+  "contributors": [
+		"Bryce Seifert"
+	],
   "license": "MIT",
   "dependencies": {
     "got": "^9.6.0"

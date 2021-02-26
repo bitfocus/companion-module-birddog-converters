@@ -1,5 +1,4 @@
 const instance_skel			= require('../../instance_skel');
-const { getConfigFields }		= require('./config');
 
 const instance_api			= require('./birddogapi');
 
@@ -24,7 +23,9 @@ class BirdDogInstance extends instance_skel {
 
     this.api.aboutDevice();
     this.api.getSourceList();
+    this.api.getActiveSource();
     this.actions();
+    this.initVariables();
   }
 
   updateConfig(config) {
@@ -34,7 +35,22 @@ class BirdDogInstance extends instance_skel {
   }
 
   config_fields() {
-    return getConfigFields();
+      return [{
+          type: 'text',
+          id: 'info',
+          width: 12,
+          label: 'Information',
+          value: 'This module supports BirdDog Studio and Mini!'
+        },
+        {
+          type: 'textinput',
+          label: 'Target IP',
+          id: 'deviceIp',
+          width: 6,
+          regex: this.REGEX_IP,
+          required: true
+        }
+      ]
   }
 
   destroy() {
@@ -48,6 +64,19 @@ class BirdDogInstance extends instance_skel {
   action(action) {
     executeAction.bind(this)(action);
   }
+
+  initVariables() {
+		var variables = [];
+
+		variables.push({
+			label: 'Label of current decode source',
+			name: 'decode_source'
+		});
+
+		this.setVariable('decode_source', this.api.device.source);
+
+		this.setVariableDefinitions(variables);
+	}
 
 }
 module.exports = BirdDogInstance;
