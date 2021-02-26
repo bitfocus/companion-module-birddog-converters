@@ -68,12 +68,12 @@ class instance_api {
         }
         this.sourcelist = [];
         for (const [key, value] of Object.entries(res.body)) {
-          var NDIName = key;
-          var NDIIP = value; 
+          const NDIName = key;
+          const NDIIP = value; 
           this.sourcelist[NDIName] = NDIIP;
-          this.instance.log('warn', this.sourcelist[NDIName])
           this.sourcelist.push({ id: NDIName, label: NDIName});
         }
+        this.instance.system.emit('instance_actions', this.instance.id, this.instance.getActions.bind(this.instance)());
       })
       .catch(err => {
         this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the IP address and port in the config settings`);
