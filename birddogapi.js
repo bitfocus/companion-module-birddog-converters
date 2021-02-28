@@ -135,6 +135,20 @@ class instance_api {
           return;
         }
         this.device.avsettings = JSON.stringify(res.body);
+        this.decodeMode = 'Updating';
+        if (res.body.videoout === 'videooutd') {
+          this.decodeMode = 'Decode'
+        } else {
+          this.decodeMode = 'Encode'
+        }
+        this.instance.setVariable('current_mode', this.decodeMode);
+        this.videoFormat = 'Updating';
+        if (res.body.videoin !='AUTO') {
+          this.videoFormat = res.body.videoin;
+        } else {
+          this.videoFormat = 'Auto'
+        }
+        this.instance.setVariable('video_format', this.videoFormat);
       })
       .catch(err => {
         this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);

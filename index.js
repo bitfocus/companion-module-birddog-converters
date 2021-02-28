@@ -24,6 +24,7 @@ class BirdDogInstance extends instance_skel {
     this.api.aboutDevice();
     this.api.getSourceList();
     this.api.getActiveSource();
+    this.api.getAVSettings();
     this.actions();
     this.initVariables();
   }
@@ -74,6 +75,20 @@ class BirdDogInstance extends instance_skel {
 		});
 
 		this.setVariable('decode_source', this.api.device.currentSource);
+
+    variables.push({
+			label: 'Current mode (encode/decode) of the device',
+			name: 'current_mode'
+		});
+
+		this.setVariable('current_mode', this.api.decodeMode);
+
+    variables.push({
+			label: 'Video format in encode mode',
+			name: 'video_format'
+		});
+
+		this.setVariable('video_format', this.api.videoFormat);
 
 		this.setVariableDefinitions(variables);
 	}
