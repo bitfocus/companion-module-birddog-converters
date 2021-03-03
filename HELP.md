@@ -1,14 +1,15 @@
-## Birddog Studio/Mini
-This module connects to a Birddog Studio/Mini
-<br/>
-The module has an integrated database based on json which stores Ndi Sources to find them later
+## BirdDog Studio NDI / Mini
+This module allows you to control the BirdDog Studio NDI / Mini.
 
 ### Configuration
-* Target IP: Type in the IP address of the device.
-* Target Port: Type in the Port of the device.
-* NDI Source Detection Mode: Enable or Disable NDI Source Detection
-* NDI Source Detection Interval: Please do not change the Ndi Source Detection Time unless you know what you are doing
+* Target IP: the IP address of the BirdDog device
 
 ### Available actions
-* Change NDI Decode Source: In the Source drop down that custom is the one for which you can also manually set your own sources as Ndi Decode Source using the three entries "NDI Source Name", "NDI Source IP" and "NDI Source Port"
-* Remove NDI Decode Source from DB
+* Change Decode Source: allows you to change the decode source from a dropdown list of sources available to the BirdDog device
+* Change Decode Source by IP: allows you to change to a custom NDI source using the Source Name, Source IP and Source Port
+* Resfresh NDI Source List: refreshes the dropdown list of sources available to the BirdDog device. *Note: this does not search for new sources on the BirdDog itself, that must be done in the BirdDog web UI. It only refreshes any new sources once the BirdDog has found*
+
+### Available variables
+* Decode Source: displays the source currently being decoded
+* Current Mode: displays the current mode (encode or decode) of the device
+* Video Format: displays the resolution selected when for encoding (only applies when decive is in encode mode)

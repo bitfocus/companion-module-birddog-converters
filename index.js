@@ -1,8 +1,6 @@
 const instance_skel			= require('../../instance_skel');
-const { getConfigFields }		= require('./config');
 
 const instance_api			= require('./birddogapi');
-const ndi_api				= require('./ndiapi');
 
 const { executeAction, getActions } 	= require('./actions');
 
@@ -15,38 +13,45 @@ class BirdDogInstance extends instance_skel {
     super(system, id, config);
 
     this.api = new instance_api(this);
-    this.ndi = new ndi_api(this);
     this.getActions = getActions;
 
   }
 
   init() {
 
-    this.status(this.STATUS_UNKNOWN);
+    this.status(this.STATUS_WARNING,'Connecting');
 
-    if (this.config.nsdMode) {
-      this.ndi.startNdiSourceInterval();
-    }
     this.api.aboutDevice();
+    this.api.getSourceList();
+    this.api.getActiveSource();
+    this.api.getAVSettings();
     this.actions();
+    this.initVariables();
   }
 
   updateConfig(config) {
-    if (this.config.nsdMode != config.nsdMode) {
-      if (config.nsdMode) {
-        this.ndi.startNdiSourceInterval();
-      } else {
-        this.ndi.stopNdiSourceInterval();
-      }
-    }
-
+    
     this.config = config;
-
-    this.actions();
+    this.init();
   }
 
   config_fields() {
-    return getConfigFields();
+      return [{
+          type: 'text',
+          id: 'info',
+          width: 12,
+          label: 'Information',
+          value: 'This module supports BirdDog Studio and Mini!'
+        },
+        {
+          type: 'textinput',
+          label: 'Target IP',
+          id: 'deviceIp',
+          width: 6,
+          regex: this.REGEX_IP,
+          required: true
+        }
+      ]
   }
 
   destroy() {
@@ -60,6 +65,33 @@ class BirdDogInstance extends instance_skel {
   action(action) {
     executeAction.bind(this)(action);
   }
+
+  initVariables() {
+		var variables = [];
+
+		variables.push({
+			label: 'Label of current decode source',
+			name: 'decode_source'
+		});
+
+		this.setVariable('decode_source', this.api.device.currentSource);
+
+    variables.push({
+			label: 'Current mode (encode/decode) of the device',
+			name: 'current_mode'
+		});
+
+		this.setVariable('current_mode', this.api.decodeMode);
+
+    variables.push({
+			label: 'Video format in encode mode',
+			name: 'video_format'
+		});
+
+		this.setVariable('video_format', this.api.videoFormat);
+
+		this.setVariableDefinitions(variables);
+	}
 
 }
 module.exports = BirdDogInstance;
