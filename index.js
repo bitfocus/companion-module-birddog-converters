@@ -1,10 +1,6 @@
 const instance_skel			= require('../../instance_skel');
-
 const instance_api			= require('./birddogapi');
-
 const { executeAction, getActions } 	= require('./actions');
-
-var log;
 
 class BirdDogInstance extends instance_skel {
 
