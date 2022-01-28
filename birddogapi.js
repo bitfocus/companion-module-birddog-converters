@@ -63,7 +63,7 @@ class instance_api {
     got.get(url, options)
       .then(res => {
         if (!res.body) {
-          this.instance.log('warn', `Unable to retreive available sources for ${this.device.deviceName}`);
+          this.instance.log('warn', `Unable to retrieve available sources for ${this.device.deviceName}`);
           return;
         }
         this.sourcelist = [];
@@ -90,7 +90,7 @@ class instance_api {
     got.get(url, options)
       .then(res => {
         if (!res.body) {
-          this.instance.log('warn', `Unable to retreive the encoding settings for ${this.device.deviceName}`);
+          this.instance.log('warn', `Unable to retrieve the encoding settings for ${this.device.deviceName}`);
           return;
         }
         this.device.encsettings = JSON.stringify(res.body);
@@ -110,7 +110,7 @@ class instance_api {
     got.get(url, options)
       .then(res => {
         if (!res.body) {
-          this.instance.log('warn', `Unable to retreive the decoding settings for ${this.device.deviceName}`);
+          this.instance.log('warn', `Unable to retrieve the decoding settings for ${this.device.deviceName}`);
           return;
         }
         this.device.decsettings = JSON.stringify(res.body);
@@ -131,7 +131,7 @@ class instance_api {
     got.get(url, options)
       .then(res => {
         if (!res.body) {
-          this.instance.log('warn', `Unable to retreive AV settings for ${this.device.deviceName}`);
+          this.instance.log('warn', `Unable to retrieve AV settings for ${this.device.deviceName}`);
           return;
         }
         this.device.avsettings = JSON.stringify(res.body);
@@ -165,7 +165,7 @@ class instance_api {
     got.get(url, options)
       .then(res => {
         if (!res.body) {
-          this.instance.log('warn', `Unable to retreive the NDI decode source for ${this.device.deviceName}`);
+          this.instance.log('warn', `Unable to retrieve the NDI decode source for ${this.device.deviceName}`);
           return;
         } else if (res.body.sourceName) {
           this.device.currentSource = res.body.sourceName;

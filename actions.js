@@ -39,8 +39,8 @@ exports.getActions = function() {
         }
       ]
     },
-    resfreshNDISourceList: {
-      label: 'Resfresh NDI Source List',
+    refreshNDISourceList: {
+      label: 'Refresh NDI Source List',
     },
   };
 };
@@ -60,7 +60,7 @@ exports.executeAction = function(action) {
     } else {
       this.log('error', 'Unable to find the configured NDI source. Please check the NDI source info in the action configuration');
     }
-  } else if (action.action === 'resfreshNDISourceList') {
+  } else if (action.action === 'refreshNDISourceList') {
       this.api.getSourceList();
   }
 };
