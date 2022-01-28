@@ -48,9 +48,7 @@ class instance_api {
         }
       })
       .catch(err => {
-        console.log(err);
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR,'Error');
+        this.deviceError(err)
       });
     return this.device;
   }
@@ -76,8 +74,7 @@ class instance_api {
         this.instance.system.emit('instance_actions', this.instance.id, this.instance.getActions.bind(this.instance)());
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
+        this.deviceError(err)
       });
     return this.sourcelist;
   }
@@ -96,8 +93,7 @@ class instance_api {
         this.device.encsettings = JSON.stringify(res.body);
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
+        this.deviceError(err)
       });
     return this.device.encsettings;
   }
@@ -117,8 +113,7 @@ class instance_api {
         this.instance.log('warn', this.device.decsettings);
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
+        this.deviceError(err)
       });
     return this.device.decsettings;
   }
@@ -151,8 +146,7 @@ class instance_api {
         this.instance.setVariable('video_format', this.videoFormat);
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
+        this.deviceError(err)
       });
     return this.device.avsettings;
   }
@@ -173,14 +167,23 @@ class instance_api {
         this.instance.setVariable('decode_source', this.device.currentSource);
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
+        this.deviceError(err)
       });
     return this.device.currentSource;
   }
 
   getDevice() {
     return this.device;
+  }
+
+  deviceError(err) {
+    this.instance.debug(err.code)
+    if (this.instance.currentStatus !== 2) {
+      if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
+        this.instance.log('error', `Unable to connect${this.device.deviceName ? ' to ' + this.device.deviceName : ''}. Please check the device IP address in the config settings`)
+      }
+      this.instance.status(this.instance.STATUS_ERROR)
+    }
   }
 
   setNDIDecodeSource(ip, port, sourceName) {
@@ -211,15 +214,14 @@ class instance_api {
         if (JSON.stringify(res.body) == JSON.stringify(sourceJson)) {
           this.device.source = sourceName;
 
-          this.instance.log('info', `Changed NDI decode source to ${this.device.source} on ${this.device.deviceName}`);
+          this.instance.log('debug', `Changed NDI decode source to ${this.device.source} on ${this.device.deviceName}`);
           this.getActiveSource();
         } else {
           this.instance.log('warn', `Unable to change NDI decode source to ${sourceName} on ${this.device.deviceName}`);
         }
       })
       .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
+        this.deviceError(err)
       });
 
   }

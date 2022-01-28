@@ -16,13 +16,15 @@ class BirdDogInstance extends instance_skel {
   init() {
 
     this.status(this.STATUS_WARNING,'Connecting');
-
-    this.api.aboutDevice();
-    this.api.getSourceList();
-    this.api.getActiveSource();
-    this.api.getAVSettings();
-    this.actions();
-    this.initVariables();
+    
+    if (this.config.deviceIp) {
+      this.api.aboutDevice();
+      this.api.getSourceList();
+      this.api.getActiveSource();
+      this.api.getAVSettings();
+      this.actions();
+      this.initVariables();
+    }
   }
 
   updateConfig(config) {

@@ -6,7 +6,8 @@ exports.getActions = function() {
           type: 'dropdown',
           label: 'Source',
           id: 'source',
-          choices: this.api.sourcelist
+          choices: this.api.sourcelist ? this.api.sourcelist : [{id: 'No sources found', label: 'No sources found'}],
+          default: this.api.sourcelist ? this.api.sourcelist[0].id : 'No sources found'
         }
       ]
     },
