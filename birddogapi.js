@@ -55,9 +55,8 @@ class instance_api {
 				}
 			})
 			.then((json) => {
-				let data = json
-				if (data) {
-					this.processData(decodeURI(url), data)
+				if (json) {
+					this.processData(decodeURI(url), json)
 				}
 			})
 			.catch((err) => {
@@ -65,7 +64,7 @@ class instance_api {
 
 				let errorText = String(err)
 				if (this.instance.currentStatus !== 2) {
-					if (errorText.match('ECONNREFUSED') || errorText.match('ENOTFOUND')) {
+					if (errorText.match('ECONNREFUSED') || errorText.match('ENOTFOUND') || errorText.match('ETIMEDOUT')) {
 						this.instance.log(
 							'error',
 							`Unable to connect${
@@ -81,17 +80,19 @@ class instance_api {
 	processData(cmd, data) {
 		if (cmd.match('/about')) {
 			if (data.MyHostName) {
-				this.device.deviceName = data.MyHostName
-				this.instance.log('info', `Connected to ${this.device.deviceName}`)
+				if (this.instance.currentStatus !== 0 && this.device.deviceName != data.MyHostName) {
+					this.instance.log('info', `Connected to ${data.MyHostName}`)
+				}
 				this.instance.status(this.instance.STATUS_OK)
+				this.device.deviceName = data.MyHostName
 			}
 		} else if (cmd.match('/list')) {
-			this.sourcelist = []
-			for (const [key, value] of Object.entries(data)) {
-				const NDIName = key
-				const NDIIP = value
-				this.sourcelist[NDIName] = NDIIP
-				this.sourcelist.push({ id: NDIName, label: NDIName })
+			this.sourceList = []
+			for (let [key, value] of Object.entries(data)) {
+				let NDIName = key
+				let NDIIP = value
+				this.sourceList[NDIName] = NDIIP
+				this.sourceList.push({ id: NDIName, label: NDIName })
 			}
 			this.instance.system.emit('instance_actions', this.instance.id, this.instance.getActions.bind(this.instance)())
 		} else if (cmd.match('/enc-settings')) {

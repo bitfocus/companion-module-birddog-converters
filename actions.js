@@ -7,8 +7,11 @@ exports.getActions = function () {
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					choices: this.api.sourcelist ? this.api.sourcelist : [{ id: 'No sources found', label: 'No sources found' }],
-					default: this.api.sourcelist ? this.api.sourcelist[0].id : 'No sources found',
+					choices:
+						this.api.sourceList?.length > 1
+							? this.api.sourceList
+							: [{ id: 'No sources found', label: 'No sources found' }],
+					default: this.api.sourceList?.length > 1 ? this.api.sourceList[0].id : 'No sources found',
 				},
 			],
 		},
@@ -50,10 +53,12 @@ exports.getActions = function () {
 
 exports.executeAction = function (action) {
 	if (action.action === 'changeNDISource') {
-		if (action.options.source != undefined) {
-			var urlAddressSplit = this.api.sourcelist[action.options.source].split(':')
-			var name = action.options.source
-			this.api.setNDIDecodeSource(urlAddressSplit[0], urlAddressSplit[1], name)
+		if (action.options.source != undefined && action.options.source != 'No sources found') {
+			let urlSplit = this.api.sourceList[action.options.source].split(':')
+			let ip = urlSplit[0]
+			let port = urlSplit[1]
+			let name = action.options.source
+			this.api.setNDIDecodeSource(ip, port, name)
 		} else {
 			this.log(
 				'error',

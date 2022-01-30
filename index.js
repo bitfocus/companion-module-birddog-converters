@@ -49,6 +49,7 @@ class BirdDogInstance extends instance_skel {
 
 	destroy() {
 		this.debug('destroy', this.id)
+		this.api.sourceList = []
 	}
 
 	actions() {
