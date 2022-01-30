@@ -14,10 +14,9 @@ class BirdDogInstance extends instance_skel {
 		this.status(this.STATUS_WARNING, 'Connecting')
 
 		if (this.config.deviceIp) {
-			this.api.aboutDevice()
+			this.api.getDeviceInfo()
 			this.api.getSourceList()
 			this.api.getActiveSource()
-			this.api.getAVSettings()
 			this.actions()
 			this.initVariables()
 		}
@@ -39,7 +38,7 @@ class BirdDogInstance extends instance_skel {
 			},
 			{
 				type: 'textinput',
-				label: 'Target IP',
+				label: 'Device IP',
 				id: 'deviceIp',
 				width: 6,
 				regex: this.REGEX_IP,
@@ -75,7 +74,7 @@ class BirdDogInstance extends instance_skel {
 			name: 'current_mode',
 		})
 
-		this.setVariable('current_mode', this.api.decodeMode)
+		this.setVariable('current_mode', this.api.currentMode)
 
 		variables.push({
 			label: 'Video format in encode mode',

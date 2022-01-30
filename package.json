@@ -17,6 +17,6 @@
 	],
 	"license": "MIT",
 	"dependencies": {
-		"got": "^9.6.0"
+		"node-fetch": "^2.6.7"
 	}
 }
