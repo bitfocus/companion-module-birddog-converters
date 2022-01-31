@@ -51,6 +51,9 @@ class instance_api {
 		fetch(url, options)
 			.then((res) => {
 				if (res.ok) {
+					if (this.instance.currentStatus !== 0) {
+						this.instance.status(this.instance.STATUS_OK)
+					}
 					return res.json()
 				}
 			})
