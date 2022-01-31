@@ -1,229 +1,145 @@
-const got = require('got');
+const fetch = require('node-fetch')
 
 class instance_api {
+	constructor(instance) {
+		this.instance = instance
+		this.device = {
+			ip: this.instance.config.deviceIp,
+			port: 8080,
+			deviceName: '',
+			encodeSettings: {
+				ndiaudio: '',
+				nditally: '',
+				ndivideoq: '',
+			},
+			decodeSettings: {
+				decss: '',
+				delfs: '',
+			},
+			avSettings: {
+				ainputsel: '',
+				ajingain: '',
+				ajoutput: '',
+				avtallyh: '',
+				avtallys: '',
+				videoin: '',
+				videoincs: '',
+				videoout: '',
+				videoouth: '',
+				videoouts: '',
+				vidinsel: '',
+			},
+		}
+	}
 
-  constructor(instance) {
-    this.instance = instance;
-    this.device = {
-      ip: this.instance.config.deviceIp,
-      port: 8080,
-      deviceName: '',
-      source: '',
-      encsettings: {
-        ndiaudio: '',
-        nditally: '',
-        ndivideoq: ''
-      },
-      decsettings: {
-        decss: '',
-        delfs: ''
-      },
-      avsettings: {
-        ainputsel: '',
-        ajingain: '',
-        ajoutput: '',
-        avtallyh: '',
-        avtallys: '',
-        videoin: '',
-        videoincs: '',
-        videoout: '',
-        videoouth: '',
-        videoouts: '',
-        vidinsel: '',
-      },
-    };
-  }
+	sendCommand(cmd, type, params) {
+		let url = `http://${this.instance.config.deviceIp}:8080/${cmd}`
+		let options = {}
+		if (type == 'PUT' || type == 'POST') {
+			options = {
+				method: type,
+				body: params != undefined ? JSON.stringify(params) : null,
+				headers: { 'Content-Type': 'application/json' },
+			}
+		} else {
+			options = {
+				method: type,
+				headers: { 'Content-Type': 'application/json' },
+			}
+		}
 
-  aboutDevice() {
-    const url = `http://${this.instance.config.deviceIp}:8080/about`;
-    const options = {
-      json: true
-    };
-    got.get(url, options)
-      .then(res => {
-        if (res.body.MyHostName) {
-          this.device.deviceName = res.body.MyHostName;
-          this.instance.log('info', `Connected to ${this.device.deviceName}`);
-          this.instance.status(this.instance.STATUS_OK);
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR,'Error');
-      });
-    return this.device;
-  }
+		fetch(url, options)
+			.then((res) => {
+				if (res.ok) {
+					if (this.instance.currentStatus !== 0) {
+						this.getDeviceInfo()
+					}
+					return res.json()
+				}
+			})
+			.then((json) => {
+				if (json) {
+					this.processData(decodeURI(url), json)
+				}
+			})
+			.catch((err) => {
+				this.instance.debug('Device Error: ' + err)
 
-  getSourceList() {
-    const url = `http://${this.instance.config.deviceIp}:8080/List`;
-    const options = {
-      json: true
-    };
-    got.get(url, options)
-      .then(res => {
-        if (!res.body) {
-          this.instance.log('warn', `Unable to retreive available sources for ${this.device.deviceName}`);
-          return;
-        }
-        this.sourcelist = [];
-        for (const [key, value] of Object.entries(res.body)) {
-          const NDIName = key;
-          const NDIIP = value; 
-          this.sourcelist[NDIName] = NDIIP;
-          this.sourcelist.push({ id: NDIName, label: NDIName});
-        }
-        this.instance.system.emit('instance_actions', this.instance.id, this.instance.getActions.bind(this.instance)());
-      })
-      .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
-      });
-    return this.sourcelist;
-  }
+				let errorText = String(err)
+				if (this.instance.currentStatus !== 2) {
+					if (errorText.match('ECONNREFUSED') || errorText.match('ENOTFOUND') || errorText.match('ETIMEDOUT')) {
+						this.instance.log(
+							'error',
+							`Unable to connect${
+								this.device.deviceName ? ' to ' + this.device.deviceName : ''
+							}. Please check the device IP address in the config settings`
+						)
+					}
+					this.instance.status(this.instance.STATUS_ERROR)
+				}
+			})
+	}
 
-  getEncSettings() {
-    const url = `http://${this.instance.config.deviceIp}:8080/enc-settings`;
-    const options = {
-      json: true
-    };
-    got.get(url, options)
-      .then(res => {
-        if (!res.body) {
-          this.instance.log('warn', `Unable to retreive the encoding settings for ${this.device.deviceName}`);
-          return;
-        }
-        this.device.encsettings = JSON.stringify(res.body);
-      })
-      .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
-      });
-    return this.device.encsettings;
-  }
+	processData(cmd, data) {
+		if (cmd.match('/about')) {
+			if (data.MyHostName) {
+				if (this.instance.currentStatus !== 0) {
+					this.instance.log('info', `Connected to ${data.MyHostName}`)
+				}
+				this.instance.status(this.instance.STATUS_OK)
+				this.device.deviceName = data.MyHostName
+			}
+		} else if (cmd.match('/list')) {
+			this.sourceList = []
+			for (let [key, value] of Object.entries(data)) {
+				let NDIName = key
+				let NDIIP = value
+				this.sourceList[NDIName] = NDIIP
+				this.sourceList.push({ id: NDIName, label: NDIName })
+			}
+			this.instance.system.emit('instance_actions', this.instance.id, this.instance.getActions.bind(this.instance)())
+		} else if (cmd.match('/enc-settings')) {
+			this.device.encodeSettings = data
+		} else if (cmd.match('/dec-settings')) {
+			this.device.decodeSettings = data
+		} else if (cmd.match('/av-settings')) {
+			this.device.avSettings = data
 
-  getDecSettings() {
-    const url = `http://${this.instance.config.deviceIp}:8080/dec-settings`;
-    const options = {
-      json: true
-    };
-    got.get(url, options)
-      .then(res => {
-        if (!res.body) {
-          this.instance.log('warn', `Unable to retreive the decoding settings for ${this.device.deviceName}`);
-          return;
-        }
-        this.device.decsettings = JSON.stringify(res.body);
-        this.instance.log('warn', this.device.decsettings);
-      })
-      .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
-      });
-    return this.device.decsettings;
-  }
+			this.currentMode = data.videoout == 'videooutd' ? 'Decode' : 'Encode'
+			this.instance.setVariable('current_mode', this.currentMode)
 
-  getAVSettings() {
-    const url = `http://${this.instance.config.deviceIp}:8080/av-settings`;
-    const options = {
-      json: true
-    };
-    got.get(url, options)
-      .then(res => {
-        if (!res.body) {
-          this.instance.log('warn', `Unable to retreive AV settings for ${this.device.deviceName}`);
-          return;
-        }
-        this.device.avsettings = JSON.stringify(res.body);
-        this.decodeMode = 'Updating';
-        if (res.body.videoout === 'videooutd') {
-          this.decodeMode = 'Decode'
-        } else {
-          this.decodeMode = 'Encode'
-        }
-        this.instance.setVariable('current_mode', this.decodeMode);
-        this.videoFormat = 'Updating';
-        if (res.body.videoin !='AUTO') {
-          this.videoFormat = res.body.videoin;
-        } else {
-          this.videoFormat = 'Auto'
-        }
-        this.instance.setVariable('video_format', this.videoFormat);
-      })
-      .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
-      });
-    return this.device.avsettings;
-  }
+			this.videoFormat = data.videoin == 'AUTO' ? 'Auto' : data.videoin
+			this.instance.setVariable('video_format', this.videoFormat)
+		} else if (cmd.match('/connectTo')) {
+			this.device.connection = data
+			this.instance.setVariable('decode_source', data.sourceName)
+		}
+	}
+	getDeviceInfo() {
+		this.sendCommand('about', 'GET')
+		this.sendCommand('enc-settings', 'GET')
+		this.sendCommand('dec-settings', 'GET')
+		this.sendCommand('av-settings', 'GET')
+	}
 
-  getActiveSource() {
-    const url = `http://${this.instance.config.deviceIp}:8080/connectTo`;
-    const options = {
-      json: true
-    };
-    got.get(url, options)
-      .then(res => {
-        if (!res.body) {
-          this.instance.log('warn', `Unable to retreive the NDI decode source for ${this.device.deviceName}`);
-          return;
-        } else if (res.body.sourceName) {
-          this.device.currentSource = res.body.sourceName;
-        }
-        this.instance.setVariable('decode_source', this.device.currentSource);
-      })
-      .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
-      });
-    return this.device.currentSource;
-  }
+	getSourceList() {
+		this.sendCommand('list', 'GET')
+	}
 
-  getDevice() {
-    return this.device;
-  }
+	getActiveSource() {
+		this.sendCommand('connectTo', 'GET')
+	}
 
-  setNDIDecodeSource(ip, port, sourceName) {
-    if (!ip || !port || !sourceName) {
-      this.instance.log('warn', `Unable to change NDI decode source for ${this.device.deviceName}`);
-      return false;
-    }
-
-    const url = `http://${this.instance.config.deviceIp}:8080/connectTo`;
-    const sourceNameSplit = sourceName.split(" ");
-    const sourceJson = {
-      connectToIp: ip,
-      port: port,
-      sourceName: sourceName,
-      sourcePcName: sourceNameSplit[0]
-    };
-
-    const options = {
-      body: sourceJson,
-      json: true
-    };
-    got.post(url, options)
-      .then(res => {
-        if (!res.body) {
-          this.instance.log('warn', `Unable to change NDI decode source to ${sourceName} on ${this.device.deviceName}`);
-          return;
-        }
-        if (JSON.stringify(res.body) == JSON.stringify(sourceJson)) {
-          this.device.source = sourceName;
-
-          this.instance.log('info', `Changed NDI decode source to ${this.device.source} on ${this.device.deviceName}`);
-          this.getActiveSource();
-        } else {
-          this.instance.log('warn', `Unable to change NDI decode source to ${sourceName} on ${this.device.deviceName}`);
-        }
-      })
-      .catch(err => {
-        this.instance.log('error', `Unable to connect to ${this.device.deviceName}. Please check the device IP address in the config settings`);
-        this.instance.status(this.instance.STATUS_ERROR);
-      });
-
-  }
-
+	setNDIDecodeSource(ip, port, sourceName) {
+		let sourceNameSplit = sourceName.split(' ')
+		let sourceJson = {
+			connectToIp: ip,
+			port: port,
+			sourceName: sourceName,
+			sourcePcName: sourceNameSplit[0],
+		}
+		this.sendCommand('connectTo', 'POST', sourceJson)
+	}
 }
 
-exports = module.exports = instance_api;
+exports = module.exports = instance_api

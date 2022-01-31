@@ -1,6 +1,6 @@
 {
 	"name": "birddog-studio",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"api_version": "1.0.0",
 	"keywords": [
 		"NDI",
@@ -17,6 +17,6 @@
 	],
 	"license": "MIT",
 	"dependencies": {
-		"got": "^9.6.0"
+		"node-fetch": "^2.6.7"
 	}
 }
