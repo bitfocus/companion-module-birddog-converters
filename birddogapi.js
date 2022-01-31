@@ -52,7 +52,7 @@ class instance_api {
 			.then((res) => {
 				if (res.ok) {
 					if (this.instance.currentStatus !== 0) {
-						this.instance.status(this.instance.STATUS_OK)
+						this.getDeviceInfo()
 					}
 					return res.json()
 				}
@@ -83,7 +83,7 @@ class instance_api {
 	processData(cmd, data) {
 		if (cmd.match('/about')) {
 			if (data.MyHostName) {
-				if (this.instance.currentStatus !== 0 && this.device.deviceName != data.MyHostName) {
+				if (this.instance.currentStatus !== 0) {
 					this.instance.log('info', `Connected to ${data.MyHostName}`)
 				}
 				this.instance.status(this.instance.STATUS_OK)
