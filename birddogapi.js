@@ -97,7 +97,7 @@ class instance_api {
 				this.sourceList[NDIName] = NDIIP
 				this.sourceList.push({ id: NDIName, label: NDIName })
 			}
-			this.instance.system.emit('instance_actions', this.instance.id, this.instance.getActions.bind(this.instance)())
+			this.instance.setActions(this.instance.getActions.bind(this.instance)())
 		} else if (cmd.match('/enc-settings')) {
 			this.device.encodeSettings = data
 		} else if (cmd.match('/dec-settings')) {

@@ -53,7 +53,7 @@ class BirdDogInstance extends instance_skel {
 	}
 
 	actions() {
-		this.system.emit('instance_actions', this.id, getActions.bind(this)())
+		this.setActions(getActions.bind(this)())
 	}
 
 	action(action) {
