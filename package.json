@@ -18,5 +18,13 @@
 	"license": "MIT",
 	"dependencies": {
 		"node-fetch": "^2.6.7"
+	},
+	"homepage": "https://github.com/bitfocus/companion-module-birddog-studio#readme",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-birddog-studio/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-birddog-studio.git"
 	}
 }
