@@ -87,8 +87,6 @@ exports.executeAction = function (action) {
 			sourceIndex = sourceList.findIndex((item) => {
 			  return item.id === name
 			})
-			
-			this.log('error','sourceIndex = ' + sourceIndex)
 
 		} else {
 			this.log(
@@ -108,34 +106,25 @@ exports.executeAction = function (action) {
 	} else if (action.action === 'refreshNDISourceList') {
 		this.api.getSourceList()
 	}else if (action.action === 'sicleTroughSources') {
-		//this.log('error', 'currentSource = ' + this.api.currentSource)
 
 		
 		sourceIndex = sourceIndex + action.options.direction
 
 		if (sourceIndex <= -1){
-			this.log('error','Pase al Ultimo')
 			sourceIndex = this.api.sourceList.length - 1
 		}else if (sourceIndex >= this.api.sourceList.length){
-			this.log('error','Pase al Primero')
 			sourceIndex = 0
 		}
-
-
-		this.log('error','sourceIndex = ' + sourceIndex)
 		
 		
 
 		let sourceList = this.api.sourceList
-		this.log('error','PASE sourceList')
 
 		
 		
 		let selectedSourceID = sourceList[sourceIndex].id
-		this.log('error', 'selectedSourceID =' + selectedSourceID)
 		
 		let selectedSource = sourceList[selectedSourceID]
-		this.log('error', 'selectedSource =' + selectedSource)
 		
 		
 		if (selectedSource != undefined) {
@@ -144,7 +133,6 @@ exports.executeAction = function (action) {
 			let port = urlSplit[1]
 			let name = selectedSourceID
 			this.api.setNDIDecodeSource(ip, port, name)
-			this.log('error','------Setie el source------')
 		} else {
 			this.log(
 				'error',
