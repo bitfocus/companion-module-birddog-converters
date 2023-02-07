@@ -1,22 +1,23 @@
-exports.getActions = function () {
+export function getActions() {
 	return {
 		changeNDISource: {
-			label: 'Change Decode Source',
+			name: 'Change Decode Source',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Source',
 					id: 'source',
-					choices:
-						this.api.sourceList?.length > 1
-							? this.api.sourceList
-							: [{ id: 'No sources found', label: 'No sources found' }],
-					default: this.api.sourceList?.length > 1 ? this.api.sourceList[0].id : 'No sources found',
+					choices: this.device.list,
+					default: 'None',
+					allowCustom: true,
 				},
 			],
+			callback: (action) => {
+				this.sendCommand('connectTo', 'POST', { sourceName: action.options.source })
+			},
 		},
-		changeNDISourceIP: {
-			label: 'Change Decode Source by IP',
+		/* changeNDISourceIP: {
+			name: 'Change Decode Source by IP',
 			options: [
 				{
 					type: 'textinput',
@@ -25,56 +26,65 @@ exports.getActions = function () {
 					width: 12,
 					regex: this.REGEX_TEXT,
 				},
+			],
+			callback: (action) => {
+				this.sendCommand('connectTo', 'POST', { sourceName: action.options.ndiSource })
+			},
+		}, */
+		cycleSource: {
+			name: 'Jump to Next/Previous Decode Source',
+			description: 'Moves between available NDI decode sources',
+			options: [
 				{
-					type: 'textinput',
-					label: 'NDI Source IP',
-					id: 'ndiSourceIp',
-					width: 8,
-					default: '127.0.0.1',
-					regex: this.REGEX_IP,
-				},
-				{
-					type: 'number',
-					label: 'NDI Source Port',
-					id: 'ndiSourcePort',
-					width: 3,
-					regex: this.REGEX_PORT,
-					min: 1,
-					max: 65535,
-					default: 5961,
+					type: 'dropdown',
+					label: 'Action',
+					id: 'jump',
+					choices: [
+						{ id: 'next', label: 'Next' },
+						{ id: 'previous', label: 'Previous' },
+					],
+					default: 'next',
 				},
 			],
+			callback: async (action) => {
+				let modifier = action.options.jump === 'next' ? 1 : -1
+				let current = this.device.decodeSource
+				let newIndex = 0
+				if (current) {
+					let currentIndex = await this.device.list.findIndex((x) => x.id === current)
+					if (currentIndex > -1) {
+						newIndex = currentIndex + modifier
+						if (newIndex > -1) {
+							let source = this.device.list[newIndex]
+							if (source) {
+								this.sendCommand('connectTo', 'POST', { sourceName: this.device.list[newIndex].id })
+							}
+						}
+					}
+				}
+			},
 		},
 		refreshNDISourceList: {
-			label: 'Refresh NDI Source List',
+			name: 'Refresh NDI Source List',
+			options: [],
+			callback: () => {
+				this.sendCommand('refresh', 'GET')
+				this.sendCommand('List', 'GET')
+			},
 		},
-	}
-}
-
-exports.executeAction = function (action) {
-	if (action.action === 'changeNDISource') {
-		if (action.options.source != undefined && action.options.source != 'No sources found') {
-			let urlSplit = this.api.sourceList[action.options.source].split(':')
-			let ip = urlSplit[0]
-			let port = urlSplit[1]
-			let name = action.options.source
-			this.api.setNDIDecodeSource(ip, port, name)
-		} else {
-			this.log(
-				'error',
-				'Unable to find the configured NDI source. Please check the NDI source info in the action configuration'
-			)
-		}
-	} else if (action.action === 'changeNDISourceIP') {
-		if (action.options.ndiSource && action.options.ndiSourceIp && action.options.ndiSourcePort) {
-			this.api.setNDIDecodeSource(action.options.ndiSourceIp, action.options.ndiSourcePort, action.options.ndiSource)
-		} else {
-			this.log(
-				'error',
-				'Unable to find the configured NDI source. Please check the NDI source info in the action configuration'
-			)
-		}
-	} else if (action.action === 'refreshNDISourceList') {
-		this.api.getSourceList()
+		reboot: {
+			name: 'Reboot Device',
+			options: [],
+			callback: () => {
+				this.sendCommand('reboot', 'GET')
+			},
+		},
+		restart: {
+			name: 'Restart Video',
+			options: [],
+			callback: () => {
+				this.sendCommand('restart', 'GET')
+			},
+		},
 	}
 }
