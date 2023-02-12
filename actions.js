@@ -1,6 +1,6 @@
 export function getActions() {
 	return {
-		changeNDISource: {
+		changeDecodeSource: {
 			name: 'Change Decode Source',
 			options: [
 				{
@@ -16,21 +16,6 @@ export function getActions() {
 				this.sendCommand('connectTo', 'POST', { sourceName: action.options.source })
 			},
 		},
-		/* changeNDISourceIP: {
-			name: 'Change Decode Source by IP',
-			options: [
-				{
-					type: 'textinput',
-					label: 'NDI Source Name',
-					id: 'ndiSource',
-					width: 12,
-					regex: this.REGEX_TEXT,
-				},
-			],
-			callback: (action) => {
-				this.sendCommand('connectTo', 'POST', { sourceName: action.options.ndiSource })
-			},
-		}, */
 		cycleSource: {
 			name: 'Jump to Next/Previous Decode Source',
 			description: 'Moves between available NDI decode sources',
@@ -64,7 +49,7 @@ export function getActions() {
 				}
 			},
 		},
-		refreshNDISourceList: {
+		refreshSourceList: {
 			name: 'Refresh NDI Source List',
 			options: [],
 			callback: () => {

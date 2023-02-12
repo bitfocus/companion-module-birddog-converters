@@ -38,12 +38,3 @@ export function getVariables() {
 
 	return variables
 }
-
-export function updateVariables() {
-	this.setVariableValues({
-		decode_source: this.device.decodeSource,
-		current_mode: this.device.currentMode,
-		video_format: this.device.videoFormat,
-		video_format: this.device.sourceStatus,
-	})
-}

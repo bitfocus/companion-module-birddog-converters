@@ -1,8 +1,9 @@
 import { InstanceBase, runEntrypoint } from '@companion-module/base'
 import { getActions } from './actions.js'
 import { getPresets } from './presets.js'
-import { getVariables, updateVariables } from './variables.js'
+import { getVariables } from './variables.js'
 import { getFeedbacks } from './feedbacks.js'
+import { upgradeScripts } from './upgrades.js'
 
 import fetch from 'node-fetch'
 import WebSocket from 'ws'
@@ -10,15 +11,13 @@ import WebSocket from 'ws'
 class BirdDogInstance extends InstanceBase {
 	constructor(internal) {
 		super(internal)
-
-		this.updateVariables = updateVariables
 	}
 
 	async init(config) {
 		this.config = config
 		this.updateStatus('connecting')
 
-		if (this.config?.deviceIp) {
+		if (this.config?.host) {
 			this.device = {}
 
 			if (this.ws !== undefined) {
@@ -53,7 +52,7 @@ class BirdDogInstance extends InstanceBase {
 			{
 				type: 'textinput',
 				label: 'Device IP or Hostname',
-				id: 'deviceIp',
+				id: 'host',
 				width: 6,
 				required: true,
 			},
@@ -61,7 +60,7 @@ class BirdDogInstance extends InstanceBase {
 	}
 
 	checkConnection() {
-		fetch(`http://${this.config.deviceIp}:8080/about`)
+		fetch(`http://${this.config.host}:8080/about`)
 			.then((res) => {
 				if (res.status == 200) {
 					return res.json()
@@ -135,7 +134,7 @@ class BirdDogInstance extends InstanceBase {
 	}
 
 	sendCommand(cmd, type, params) {
-		let url = `http://${this.config.deviceIp}:8080/${cmd}`
+		let url = `http://${this.config.host}:8080/${cmd}`
 		let options = {}
 		if (type == 'PUT' || type == 'POST') {
 			options = {
@@ -214,7 +213,7 @@ class BirdDogInstance extends InstanceBase {
 			delete this.ws
 		}
 
-		this.ws = new WebSocket(`ws://${this.config.deviceIp}:6790/`)
+		this.ws = new WebSocket(`ws://${this.config.host}:6790/`)
 
 		this.ws.on('open', () => {
 			this.log('debug', `WebSocket connection opened`)
@@ -273,4 +272,4 @@ class BirdDogInstance extends InstanceBase {
 	}
 }
 
-runEntrypoint(BirdDogInstance, [])
+runEntrypoint(BirdDogInstance, upgradeScripts)
