@@ -4,6 +4,7 @@ import { getPresets } from './presets.js'
 import { getVariables } from './variables.js'
 import { getFeedbacks } from './feedbacks.js'
 import { upgradeScripts } from './upgrades.js'
+import { models } from './models.js'
 
 import fetch from 'node-fetch'
 import WebSocket from 'ws'
@@ -108,9 +109,13 @@ class BirdDogInstance extends InstanceBase {
 		//Open Websocket
 		this.initWebsocket()
 
-		//Permanent Settings Based on Model
-		if (this.device?.about?.Format === 'PLAY') {
-			this.setVariableValues({ current_mode: 'Decode' })
+		//Model Specific Requests
+		let device = this.device.about.Format
+		if (models.operationmode.available.find((converter) => converter == device)) {
+			this.sendCommand('operationmode', 'GET')
+		} else {
+			let mode = models.operationmode.static[device]
+			this.setVariableValues({ current_mode: mode ? mode : 'Unknown' })
 		}
 	}
 	initVariables() {
@@ -153,7 +158,11 @@ class BirdDogInstance extends InstanceBase {
 			.then((res) => {
 				//this.processStatus(res)
 				if (res.status == 200) {
-					return res.json()
+					if (cmd === 'operationmode') {
+						this.processData(cmd, res.text())
+					} else {
+						return res.json()
+					}
 				}
 			})
 			.then((json) => {
@@ -195,15 +204,11 @@ class BirdDogInstance extends InstanceBase {
 			})
 			this.checkFeedbacks('decodeSourceName')
 		} else if (cmd.match('operationmode')) {
-			if (this.device.about.Format === 'Play') {
-				this.setVariableValues({
-					current_mode: 'Decode',
-				})
-			}
-			/* this.device.operationMode = data.sourceName
+			console.log('here')
+			this.device.operationMode = data.sourceName
 			this.setVariableValues({
 				current_mode: data.sourceName,
-			}) */
+			})
 		}
 	}
 
