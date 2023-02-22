@@ -10,8 +10,8 @@ For more info take a look at the file: [HELP.md](./companion/HELP.md) and LICENS
 
 - Major
   - Updated for Companion v3 compatibility
-  - Updated to use the new BirDog API 2.0.
-    - _Note: this is a substantially different API, so there may be breaking changes with your previous setup. This also requires your converter updated to the latest NDI 5 firmware._
+  - Updated to the new BirDog API 2.0.
+    - _Note: this is a substantially different API, so there may be breaking changes with your previous setup. This also requires your converter updated to the latest LTS firmware or newer._
 
 ### v1.0.1
 
