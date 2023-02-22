@@ -77,7 +77,7 @@ class BirdDogInstance extends InstanceBase {
 						'error',
 						`Unable to connect to ${
 							data.MyHostName ? data.MyHostName : 'BirdDog device'
-						}, please update the firmware to the latest NDI 5 version`
+						}, firmware must be updated to LTS version or newer`
 					)
 					this.updateStatus('connection_failure', 'Firmware Update Needed')
 				}

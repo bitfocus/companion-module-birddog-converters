@@ -7,7 +7,6 @@ export const upgradeScripts = [
 		}
 
 		if (props.config) {
-			console.log(props.config)
 			if (props.config.info !== undefined) {
 				delete props.config.info
 			}
@@ -19,14 +18,18 @@ export const upgradeScripts = [
 			changes.updatedConfig = props.config
 		}
 
-		for (const action of props.actions) {
+		for (let action of props.actions) {
 			if (action.options === undefined) {
 				action.options = {}
 			}
+
 			switch (action.actionId) {
 				case 'changeNDISource':
-					console.log(action)
-					action.options.source = options.source
+					if (action.options.source === 'No sources found') {
+						action.options.source = 'None'
+					} else {
+						action.options.source = action.options.source
+					}
 					action.actionId = 'changeDecodeSource'
 
 					changes.updatedActions.push(action)
@@ -48,7 +51,6 @@ export const upgradeScripts = [
 					break
 			}
 		}
-
 		return changes
 	},
 ]
