@@ -1,10 +1,17 @@
-# companion-module-birddog-studio
+# companion-module-birddog-converters
 
-Module to control BirdDog Studio and Mini.
+This module allows you to control BirdDog NDI encoders and decoders.
 
-For more info take a look at the file: "Help.MD" and LICENSE
+For more info take a look at the file: [HELP.md](./companion/HELP.md) and LICENSE
 
-## Changes
+## Changelog
+
+### v2.0.0
+
+- Major
+  - Updated for Companion v3 compatibility
+  - Updated to the new BirDog API 2.0.
+    - _Note: this is a substantially different API, so there may be breaking changes with your previous setup. This also requires your converter updated to the latest LTS firmware or newer._
 
 ### v1.0.1
 
