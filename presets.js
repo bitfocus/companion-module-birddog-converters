@@ -60,101 +60,6 @@ export function getPresets() {
 			],
 			feedbacks: [],
 		},
-		refreshNDISourceList: {
-			type: 'button',
-			category: 'NDI Source List',
-			name: 'Refresh Source List',
-			options: {},
-			style: {
-				text: 'Refresh NDI Sources',
-				size: '14',
-				color: ColorWhite,
-				bgcolor: ColorBlack,
-			},
-			steps: [
-				{
-					down: [{ actionId: 'refreshNDISourceList' }],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		},
-		reboot: {
-			type: 'button',
-			category: 'Device',
-			name: 'Reboot Device',
-			options: {},
-			style: {
-				text: 'Reboot',
-				size: '14',
-				color: ColorWhite,
-				bgcolor: ColorBlack,
-			},
-			steps: [
-				{
-					down: [{ actionId: 'reboot' }],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		},
-		rebootDeviceName: {
-			type: 'button',
-			category: 'Device',
-			name: 'Reboot Device Name',
-			options: {},
-			style: {
-				text: 'Reboot $(birddog-converters:device_name)',
-				size: 'auto',
-				color: ColorWhite,
-				bgcolor: ColorBlack,
-			},
-			steps: [
-				{
-					down: [{ actionId: 'reboot' }],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		},
-		restart: {
-			type: 'button',
-			category: 'Device',
-			name: 'Restart',
-			options: {},
-			style: {
-				text: 'Restart Video',
-				size: '14',
-				color: ColorWhite,
-				bgcolor: ColorBlack,
-			},
-			steps: [
-				{
-					down: [{ actionId: 'restart' }],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		},
-		restartDeviceName: {
-			type: 'button',
-			category: 'Device',
-			name: 'Restart Device Name',
-			options: {},
-			style: {
-				text: 'Restart $(birddog-converters:device_name) Video',
-				size: 'auto',
-				color: ColorWhite,
-				bgcolor: ColorBlack,
-			},
-			steps: [
-				{
-					down: [{ actionId: 'restart' }],
-					up: [],
-				},
-			],
-			feedbacks: [],
-		},
 		currentSource: {
 			type: 'button',
 			category: 'Status',
@@ -241,6 +146,104 @@ export function getPresets() {
 		},
 	}
 
+	if (!this.legacy) {
+		presets.refreshNDISourceList = {
+			type: 'button',
+			category: 'NDI Source List',
+			name: 'Refresh Source List',
+			options: {},
+			style: {
+				text: 'Refresh NDI Sources',
+				size: '14',
+				color: ColorWhite,
+				bgcolor: ColorBlack,
+			},
+			steps: [
+				{
+					down: [{ actionId: 'refreshNDISourceList' }],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+		presets.reboot = {
+			type: 'button',
+			category: 'Device',
+			name: 'Reboot Device',
+			options: {},
+			style: {
+				text: 'Reboot',
+				size: '14',
+				color: ColorWhite,
+				bgcolor: ColorBlack,
+			},
+			steps: [
+				{
+					down: [{ actionId: 'reboot' }],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+		presets.rebootDeviceName = {
+			type: 'button',
+			category: 'Device',
+			name: 'Reboot Device Name',
+			options: {},
+			style: {
+				text: 'Reboot $(birddog-converters:device_name)',
+				size: 'auto',
+				color: ColorWhite,
+				bgcolor: ColorBlack,
+			},
+			steps: [
+				{
+					down: [{ actionId: 'reboot' }],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+		presets.restart = {
+			type: 'button',
+			category: 'Device',
+			name: 'Restart',
+			options: {},
+			style: {
+				text: 'Restart Video',
+				size: '14',
+				color: ColorWhite,
+				bgcolor: ColorBlack,
+			},
+			steps: [
+				{
+					down: [{ actionId: 'restart' }],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+		presets.restartDeviceName = {
+			type: 'button',
+			category: 'Device',
+			name: 'Restart Device Name',
+			options: {},
+			style: {
+				text: 'Restart $(birddog-converters:device_name) Video',
+				size: 'auto',
+				color: ColorWhite,
+				bgcolor: ColorBlack,
+			},
+			steps: [
+				{
+					down: [{ actionId: 'restart' }],
+					up: [],
+				},
+			],
+			feedbacks: [],
+		}
+	}
+
 	if (this.device.list) {
 		this.device.list.forEach((source) => {
 			presets[`change${source.id}`] = {
@@ -258,7 +261,7 @@ export function getPresets() {
 					{
 						down: [
 							{
-								actionId: 'changeNDISource',
+								actionId: 'changeDecodeSource',
 								options: {
 									source: `${source.id}`,
 								},

@@ -16,6 +16,7 @@ class BirdDogInstance extends InstanceBase {
 
 	async init(config) {
 		this.config = config
+		this.legacy = null
 		this.updateStatus('connecting')
 
 		if (this.config?.host) {
@@ -74,13 +75,10 @@ class BirdDogInstance extends InstanceBase {
 					this.updateStatus('ok')
 					this.openConnection()
 				} else if (data?.Version === '1.0') {
-					this.log(
-						'error',
-						`Unable to connect to ${
-							data.MyHostName ? data.MyHostName : 'BirdDog device'
-						}, firmware must be updated to LTS version or newer`
-					)
-					this.updateStatus('connection_failure', 'Firmware Update Needed')
+					this.legacy = true
+					this.log('info', `Connected to ${data.MyHostName}`)
+					this.updateStatus('ok')
+					this.openConnection()
 				}
 			})
 			.catch((error) => {
@@ -110,12 +108,16 @@ class BirdDogInstance extends InstanceBase {
 		this.initWebsocket()
 
 		//Model Specific Requests
-		let device = this.device.about.Format
-		if (models.operationmode.available.find((converter) => converter == device)) {
-			this.sendCommand('operationmode', 'GET')
+		if (!this.legacy) {
+			let device = this.device.about.Format
+			if (models.operationmode.available.find((converter) => converter == device)) {
+				this.sendCommand('operationmode', 'GET')
+			} else {
+				let mode = models.operationmode.static[device]
+				this.setVariableValues({ current_mode: mode ? mode : 'Unknown' })
+			}
 		} else {
-			let mode = models.operationmode.static[device]
-			this.setVariableValues({ current_mode: mode ? mode : 'Unknown' })
+			this.sendCommand('av-settings', 'GET')
 		}
 	}
 	initVariables() {
@@ -185,6 +187,9 @@ class BirdDogInstance extends InstanceBase {
 	processData(cmd, data) {
 		if (cmd.match('about')) {
 			this.device.about = data
+			if (this.legacy) {
+				this.device.about.HostName = data.MyHostName
+			}
 			this.setVariableValues({
 				device_name: data.HostName,
 			})
@@ -204,11 +209,19 @@ class BirdDogInstance extends InstanceBase {
 			})
 			this.checkFeedbacks('decodeSourceName')
 		} else if (cmd.match('operationmode')) {
-			console.log('here')
-			this.device.operationMode = data.sourceName
+			this.device.operationMode = data
 			this.setVariableValues({
-				current_mode: data.sourceName,
+				current_mode: data,
 			})
+		}
+		//LEGACY
+		else if (cmd.match('av-settings')) {
+			if (data.videoout) {
+				this.device.operationMode = data.videoout == 'videooutd' ? 'Decode' : 'Encode'
+				this.setVariableValues({
+					current_mode: this.device.operationMode,
+				})
+			}
 		}
 	}
 
@@ -260,6 +273,7 @@ class BirdDogInstance extends InstanceBase {
 			} else if (key === 'src_stat' && value && value != this.device.sourceStatus) {
 				this.device.sourceStatus = value
 				updates.source_status = value
+				this.checkFeedbacks('decodeSourceStatus')
 			} else if (key === 'vid_res' && value && value != this.device.videoResolution) {
 				this.device.videoResolution = value
 				updates.video_resolution = value
@@ -267,11 +281,19 @@ class BirdDogInstance extends InstanceBase {
 				this.device.videoFrameRate = value
 				updates.video_framerate = value
 			}
+			//LEGACY
+			else if (key === 'cp2' && value && value != this.device.sourceStatus) {
+				this.device.sourceStatus = value
+				updates.source_status = value
+				this.checkFeedbacks('decodeSourceStatus')
+			}
 		}
-		if (updates.video_format === '') {
-			updates.video_format = `${updates.video_resolution ? updates.video_resolution : ''} ${
-				updates.video_framerate ? updates.video_framerate : ''
+
+		if (!this.device.videoFormat || updates.video_resolution) {
+			updates.video_format = `${this.device.videoResolution ? this.device.videoResolution : ''} ${
+				this.device.videoFrameRate ? this.device.videoFrameRate : ''
 			}`
+			this.device.videoFormat = updates.video_format
 		}
 		this.setVariableValues(updates)
 	}
