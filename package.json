@@ -1,6 +1,6 @@
 {
 	"name": "birddog-converters",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"main": "index.js",
 	"scripts": {
 		"format": "prettier -w ."
@@ -8,7 +8,7 @@
 	"type": "module",
 	"license": "MIT",
 	"dependencies": {
-		"@companion-module/base": "~1.3.0",
+		"@companion-module/base": "~1.4.1",
 		"node-fetch": "^3.3.1",
 		"ws": "^8.13.0"
 	},

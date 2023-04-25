@@ -42,7 +42,7 @@ export function getFeedbacks() {
 		},
 		options: [],
 		callback: () => {
-			if (this.device.sourceStatus) {
+			if (this.device.sourceStatus == 'Connected') {
 				return true
 			}
 		},

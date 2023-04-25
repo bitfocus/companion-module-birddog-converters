@@ -1,5 +1,5 @@
 export function getActions() {
-	return {
+	let actions = {
 		changeDecodeSource: {
 			name: 'Change Decode Source',
 			options: [
@@ -49,27 +49,32 @@ export function getActions() {
 				}
 			},
 		},
-		refreshSourceList: {
+	}
+
+	if (!this.legacy) {
+		actions.refreshSourceList = {
 			name: 'Refresh NDI Source List',
 			options: [],
 			callback: () => {
 				this.sendCommand('refresh', 'GET')
 				this.sendCommand('List', 'GET')
 			},
-		},
-		reboot: {
+		}
+		actions.reboot = {
 			name: 'Reboot Device',
 			options: [],
 			callback: () => {
 				this.sendCommand('reboot', 'GET')
 			},
-		},
-		restart: {
+		}
+		actions.restart = {
 			name: 'Restart Video',
 			options: [],
 			callback: () => {
 				this.sendCommand('restart', 'GET')
 			},
-		},
+		}
 	}
+
+	return actions
 }

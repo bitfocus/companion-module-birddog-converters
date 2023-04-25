@@ -7,15 +7,16 @@ export const upgradeScripts = [
 		}
 
 		if (props.config) {
-			if (props.config.info !== undefined) {
-				delete props.config.info
+			let config = props.config
+			if (config.info !== undefined) {
+				delete config.info
 			}
-			if (props.config.deviceIp !== undefined) {
-				props.config.host = props.config.deviceIp
+			if (config.deviceIp !== undefined) {
+				config.host = config.deviceIp
 
-				delete props.config.deviceIp
+				delete config.deviceIp
 			}
-			changes.updatedConfig = props.config
+			changes.updatedConfig = config
 		}
 
 		for (let action of props.actions) {
