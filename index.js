@@ -235,6 +235,7 @@ class BirdDogInstance extends InstanceBase {
 
 		this.ws.on('open', () => {
 			this.log('debug', `WebSocket connection opened`)
+			this.updateStatus('ok')
 		})
 
 		this.ws.on('close', (code) => {
