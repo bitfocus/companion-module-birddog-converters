@@ -10,7 +10,7 @@
 	"dependencies": {
 		"@companion-module/base": "~1.10.0",
 		"node-fetch": "^3.3.2",
-		"ws": "^8.18.0"
+		"ws": "^8.20.1"
 	},
 	"repository": {
 		"type": "git",
