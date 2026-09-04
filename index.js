@@ -5,6 +5,7 @@ import { getVariables } from './variables.js'
 import { getFeedbacks } from './feedbacks.js'
 import { upgradeScripts } from './upgrades.js'
 import { models } from './models.js'
+import { buildRequestUrl } from './request.js'
 
 import fetch from 'node-fetch'
 import WebSocket from 'ws'
@@ -140,8 +141,8 @@ class BirdDogInstance extends InstanceBase {
 		this.setActionDefinitions(actions)
 	}
 
-	sendCommand(cmd, type, params) {
-		let url = `http://${this.config.host}:8080/${cmd}`
+	sendCommand(cmd, type, params, query) {
+		const url = buildRequestUrl(this.config.host, cmd, query)
 		let options = {}
 		if (type == 'PUT' || type == 'POST') {
 			options = {
