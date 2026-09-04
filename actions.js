@@ -11,9 +11,21 @@ export function getActions() {
 					default: 'None',
 					allowCustom: true,
 				},
+				{
+					type: 'dropdown',
+					label: 'Decode channel',
+					id: 'channel',
+					choices: [
+						{ id: 1, label: 'Channel 1' },
+						{ id: 2, label: 'Channel 2' },
+						{ id: 3, label: 'Channel 3' },
+						{ id: 4, label: 'Channel 4' },
+					],
+					default: 1,
+				},
 			],
 			callback: (action) => {
-				this.sendCommand('connectTo', 'POST', { sourceName: action.options.source })
+				this.sendCommand('connectTo', 'POST', { sourceName: action.options.source }, { ChNum: action.options.channel })
 			},
 		},
 		cycleSource: {
