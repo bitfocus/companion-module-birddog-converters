@@ -5,6 +5,7 @@ import { getVariables } from './variables.js'
 import { getFeedbacks } from './feedbacks.js'
 import { upgradeScripts } from './upgrades.js'
 import { models } from './models.js'
+import { normalizeOperationMode, normalizeSourceStatus, supportsOperationMode } from './device-data.js'
 
 import fetch from 'node-fetch'
 import WebSocket from 'ws'
@@ -110,7 +111,7 @@ class BirdDogInstance extends InstanceBase {
 		//Model Specific Requests
 		if (!this.legacy) {
 			let device = this.device.about.Format
-			if (models.operationmode.available.find((converter) => converter == device)) {
+			if (supportsOperationMode(this.device.about, models.operationmode.available)) {
 				this.sendCommand('operationmode', 'GET')
 			} else {
 				let mode = models.operationmode.static[device]
@@ -160,11 +161,7 @@ class BirdDogInstance extends InstanceBase {
 			.then((res) => {
 				//this.processStatus(res)
 				if (res.status == 200) {
-					if (cmd === 'operationmode') {
-						this.processData(cmd, res.text())
-					} else {
-						return res.json()
-					}
+					return cmd === 'operationmode' ? res.text() : res.json()
 				}
 			})
 			.then((json) => {
@@ -209,9 +206,9 @@ class BirdDogInstance extends InstanceBase {
 			})
 			this.checkFeedbacks('decodeSourceName')
 		} else if (cmd.match('operationmode')) {
-			this.device.operationMode = data
+			this.device.operationMode = normalizeOperationMode(data)
 			this.setVariableValues({
-				current_mode: data,
+				current_mode: this.device.operationMode,
 			})
 		}
 		//LEGACY
@@ -264,6 +261,8 @@ class BirdDogInstance extends InstanceBase {
 	processWebsocket(data) {
 		let updates = {}
 		for (const [key, value] of Object.entries(data)) {
+			const sourceStatus = normalizeSourceStatus(value)
+
 			if (key === 'vid_str_name' && value && value != this.device.decodeSource) {
 				this.device.decodeSource = value
 				updates.decode_source = value
@@ -271,9 +270,9 @@ class BirdDogInstance extends InstanceBase {
 			} else if (key === 'vid_disp' && value != this.device.videoFormat) {
 				this.device.videoFormat = value
 				updates.video_format = value
-			} else if (key === 'src_stat' && value && value != this.device.sourceStatus) {
-				this.device.sourceStatus = value
-				updates.source_status = value
+			} else if (key === 'src_stat' && sourceStatus && sourceStatus != this.device.sourceStatus) {
+				this.device.sourceStatus = sourceStatus
+				updates.source_status = this.device.sourceStatus
 				this.checkFeedbacks('decodeSourceStatus')
 			} else if (key === 'vid_res' && value && value != this.device.videoResolution) {
 				this.device.videoResolution = value
@@ -283,9 +282,9 @@ class BirdDogInstance extends InstanceBase {
 				updates.video_framerate = value
 			}
 			//LEGACY
-			else if (key === 'cp2' && value && value != this.device.sourceStatus) {
-				this.device.sourceStatus = value
-				updates.source_status = value
+			else if (key === 'cp2' && sourceStatus && sourceStatus != this.device.sourceStatus) {
+				this.device.sourceStatus = sourceStatus
+				updates.source_status = this.device.sourceStatus
 				this.checkFeedbacks('decodeSourceStatus')
 			}
 		}

@@ -3,7 +3,8 @@
 	"version": "2.0.2",
 	"main": "index.js",
 	"scripts": {
-		"format": "prettier -w ."
+		"format": "prettier -w .",
+		"test": "node --test"
 	},
 	"type": "module",
 	"license": "MIT",
