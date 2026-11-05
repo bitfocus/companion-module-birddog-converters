@@ -8,7 +8,7 @@
 	"type": "module",
 	"license": "MIT",
 	"dependencies": {
-		"@companion-module/base": "~1.10.0",
+		"@companion-module/base": "~1.15.0",
 		"node-fetch": "^3.3.2",
 		"ws": "^8.21.0"
 	},
@@ -17,7 +17,8 @@
 		"url": "git+https://github.com/bitfocus/companion-module-birddog-studio.git"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^2.8.0"
+		"@companion-module/tools": "^2.9.0",
+		"prettier": "^3.6.2"
 	},
 	"prettier": "@companion-module/tools/.prettierrc.json"
 }
